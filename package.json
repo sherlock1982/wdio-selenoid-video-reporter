@@ -1,21 +1,26 @@
 {
-  "name": "wdio-selenium-video-reporter",
+  "name": "wdio-selenoid-video-reporter",
   "version": "1.0.0",
   "description": "WebdriverIO reporter for Selenium videos",
   "main": "build/index.js",
   "scripts": {
-    "test": "jest",
-    "compile": "babel src --out-dir build"
+    "lint": "eslint src/",
+    "test": "jest src/",
+    "compile": "babel src --out-dir build",
+    "ci": "npm-run-all lint test compile"
   },
   "author": "Nikolai Orekhov",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sherlock1982/wdio-selenoid-video-reporter.git"
+  },
   "dependencies": {
     "@wdio/reporter": "^6.1.14",
     "download": "^8.0.0",
     "promise-retry": "^1.1.1"
   },
   "devDependencies": {
-    "nock": "^12.0.3",
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
@@ -23,6 +28,8 @@
     "eslint": "^7.2.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.21.2",
-    "jest": "^26.0.1"
+    "jest": "^26.0.1",
+    "nock": "^12.0.3",
+    "npm-run-all": "^4.1.5"
   }
 }
