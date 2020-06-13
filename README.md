@@ -1,7 +1,7 @@
-# wdio-selenium-video-reporter
-Reporter for WebdriverIO v6 that downloads videos from Selenium Hub
+# wdio-selenoid-video-reporter
+Reporter for WebdriverIO v6 that downloads videos from Selenoid Hub
 
-This is a reporter for [Webdriver IO v6](https://webdriver.io/) that downloads videos from your Selenium Hub.
+This is a reporter for [Webdriver IO v6](https://webdriver.io/) that downloads videos from your Selenoid Hub.
 
 
 Installation
@@ -10,9 +10,9 @@ Installation
 Install the reporter
 --------------------
 
-`yarn add wdio-selenium-video-reporter`
+`yarn add wdio-selenoid-video-reporter`
 or
-`npm install wdio-selenium-video-reporter`
+`npm install wdio-selenoid-video-reporter`
 
 
 Add the reporter to config
@@ -20,14 +20,14 @@ Add the reporter to config
 
 At the top of the `wdio.conf.js`-file, require the library:
 ```
-const seleniumVideo = require('wdio-selenium-video-reporter');
+const selenoidVideo = require('wdio-selenoid-video-reporter');
 ```
 
 Then add the video reporter to the configuration in the reporters property:
 
 ```
  reporters: [
-    [seleniumVideo, {
+    [selenoidVideo, {
       saveAllVideos: false,       // If true, also saves videos for successful test cases
     }],
   ],

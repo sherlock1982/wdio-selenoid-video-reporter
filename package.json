@@ -1,6 +1,6 @@
 {
   "name": "wdio-selenoid-video-reporter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "WebdriverIO reporter for Selenium videos",
   "main": "build/index.js",
   "scripts": {
