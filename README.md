@@ -1,5 +1,6 @@
-# wdio-selenoid-video-reporter
-Reporter for WebdriverIO v6 that downloads videos from Selenoid Hub
+# wdio-selenoid-video-reporter [![Build Status](https://travis-ci.org/sherlock1982/wdio-selenoid-video-reporter.svg?branch=master)](https://travis-ci.org/sherlock1982/wdio-selenoid-video-reporter)
+
+Reporter for WebdriverIO v6 that downloads videos from Selenoid Hub 
 
 This is a reporter for [Webdriver IO v6](https://webdriver.io/) that downloads videos from your Selenoid Hub.
 
