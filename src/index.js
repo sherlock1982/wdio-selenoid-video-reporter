@@ -28,12 +28,14 @@ class SeleniumVideoReporter extends WDIOReporter {
     }
 
     onRunnerEnd(runner) {
-        const url = `${runner.config.protocol}://${runner.config.hostname}:${runner.config.port}/video/${runner.sessionId}.mp4`;
-
         if (this.config.saveAllVideos || runner.failures > 0) {
+            const url = `${runner.config.protocol}://${runner.config.hostname}:${runner.config.port}/video/${runner.sessionId}.mp4`;
             this.write(`${url}\n`);
+
             return promiseRetry(this.config,
-                (retry) => download(url, this.config.outputDir).catch(retry)).finally(() => {
+                (retry) => download(url, this.config.outputDir, {
+                    filename: `wdio-${runner.cid}-selenoid.mp4`,
+                }).catch(retry)).finally(() => {
                 this.synchronised = true;
             });
         }

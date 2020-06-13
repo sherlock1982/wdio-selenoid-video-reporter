@@ -2,7 +2,7 @@ import nock from 'nock';
 import fs from 'fs';
 import SeleniumVideoReporter from './index';
 
-const targetFile = 'video/xs3wt345t34tergde.mp4';
+const targetFile = 'video/wdio-0-0-selenoid.mp4';
 
 describe('Main test', () => {
     let reporter;
@@ -32,6 +32,7 @@ describe('Main test', () => {
     it('Download on failure', async () => {
         await reporter.onRunnerEnd({
             failures: 1,
+            cid: '0-0',
             sessionId: 'xs3wt345t34tergde',
             config: {
                 protocol: 'http',
@@ -46,6 +47,7 @@ describe('Main test', () => {
     it('Don\'t download on success', async () => {
         await reporter.onRunnerEnd({
             failures: 0,
+            cid: '0-0',
             sessionId: 'xs3wt345t34tergde',
             config: {
                 protocol: 'http',
