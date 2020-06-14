@@ -2,7 +2,7 @@
 
 Reporter for WebdriverIO v6 that downloads videos from Selenoid Hub 
 
-This is a reporter for [Webdriver IO v6](https://webdriver.io/) that downloads videos from your Selenoid Hub.
+This is a reporter for [Webdriver IO v6](https://webdriver.io/) that downloads videos from your [Selenoid Hub](https://aerokube.com/selenoid/).
 
 
 Installation
@@ -21,7 +21,7 @@ Add the reporter to config
 
 At the top of the `wdio.conf.js`-file, require the library:
 ```
-const selenoidVideo = require('wdio-selenoid-video-reporter');
+const selenoidVideo = require('wdio-selenoid-video-reporter').default;
 ```
 
 Then add the video reporter to the configuration in the reporters property:
@@ -43,10 +43,20 @@ Normal configuration parameters
 Most users may want to set these
 
 - `saveAllVideos` Set to true to save videos for passing tests. `Default: false`
+- `deleteDownloadedVideos` Set to false to keep downloaded videos on Selenoid Hub `Default: true`, 
+- `deleteSuccessfulVideos` Set to false to keep successfull videos on Selenoid Hub `Default: true`, 
 - `outputDir` Directory to save video files. `Default: video`
 - `retries` Number of retries to download video. `Default: 3`
 - `minTimeout` The number of milliseconds before starting the first retry. `Default: 2000`
 - `maxTimeout` The maximum number of milliseconds between two retries. `Default: 6000`
+- `outputFileFormat` A function to define downloaded videos filenames. `Default: function(runner){ return "wdio-${options.cid}-selenoid.mp4"}` 
+
+Troubleshooting
+============
+
+Default reporter timeout allocated by WebdriverIO is 5 seconds.
+If your videos taking longer to download please increase `reporterSyncTimeout` in `wdio.conf.js` 
+to a bigger value.
 
 Thanks
 ============

@@ -1,10 +1,15 @@
 import promiseRetry from 'promise-retry';
 import download from 'download';
 import WDIOReporter from '@wdio/reporter';
+import got from 'got';
 
 const config = {
     // Save all videos or on failures only
     saveAllVideos: false,
+    // Delete downloaded videos
+    deleteDownloadedVideos: true,
+    // Delete successful videos
+    deleteSuccessfulVideos: true,
     // Specify output directory
     outputDir: 'video',
     // Number of retries
@@ -13,6 +18,9 @@ const config = {
     minTimeout: 2000,
     // The maximum number of milliseconds between two retries.
     maxTimeout: 6000,
+    outputFileFormat(options) {
+        return `wdio-${options.cid}-selenoid.mp4`;
+    },
 };
 
 class SeleniumVideoReporter extends WDIOReporter {
@@ -27,22 +35,31 @@ class SeleniumVideoReporter extends WDIOReporter {
         return this.synchronised;
     }
 
-    onRunnerEnd(runner) {
-        if (this.config.saveAllVideos || runner.failures > 0) {
+    async onRunnerEnd(runner) {
+        try {
             const url = `${runner.config.protocol}://${runner.config.hostname}:${runner.config.port}/video/${runner.sessionId}.mp4`;
-            this.write(`${url}\n`);
-
-            return promiseRetry(this.config,
-                (retry) => download(url, this.config.outputDir, {
-                    filename: `wdio-${runner.cid}-selenoid.mp4`,
-                }).catch(retry)).finally(() => {
-                this.synchronised = true;
-            });
+            if (this.config.saveAllVideos || runner.failures > 0) {
+                await this.downloadVideo(runner, url);
+                if (this.config.deleteDownloadedVideos) {
+                    await got(url, {
+                        method: 'DELETE',
+                    });
+                }
+            } else if (this.config.deleteSuccessfulVideos) {
+                await got(url, {
+                    method: 'DELETE',
+                });
+            }
+        } finally {
+            this.synchronised = true;
         }
+    }
 
-        // Return resolved promise
-        this.synchronised = true;
-        return Promise.resolve();
+    downloadVideo(runner, url) {
+        return promiseRetry(this.config,
+            (retry) => download(url, this.config.outputDir, {
+                filename: this.config.outputFileFormat(runner),
+            }).catch(retry));
     }
 }
 

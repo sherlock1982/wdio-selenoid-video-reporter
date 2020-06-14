@@ -6,14 +6,30 @@ const targetFile = 'video/wdio-0-0-selenoid.mp4';
 
 describe('Main test', () => {
     let reporter;
+    let downloadRequest;
+    let deleteRequest;
+
+    const config = {
+        cid: '0-0',
+        sessionId: 'xs3wt345t34tergde',
+        config: {
+            protocol: 'http',
+            hostname: 'selenium',
+            port: 4444,
+        },
+    };
 
     beforeEach(() => {
         if (fs.existsSync(targetFile)) {
             fs.unlinkSync(targetFile);
         }
-        nock('http://selenium:4444')
+        downloadRequest = nock('http://selenium:4444')
             .get('/video/xs3wt345t34tergde.mp4')
             .reply(200, 'Hello world!');
+
+        deleteRequest = nock('http://selenium:4444')
+            .delete('/video/xs3wt345t34tergde.mp4')
+            .reply(200);
 
         reporter = new SeleniumVideoReporter({
             writeStream: {
@@ -30,31 +46,38 @@ describe('Main test', () => {
     });
 
     it('Download on failure', async () => {
-        await reporter.onRunnerEnd({
-            failures: 1,
-            cid: '0-0',
-            sessionId: 'xs3wt345t34tergde',
-            config: {
-                protocol: 'http',
-                hostname: 'selenium',
-                port: 4444,
-            },
-        });
+        await reporter.onRunnerEnd({ failures: 1, ...config });
+
+        expect(downloadRequest.isDone());
+        expect(deleteRequest.isDone());
         expect(fs.existsSync(targetFile)).toBeTruthy();
         expect(fs.readFileSync(targetFile, 'utf-8')).toEqual('Hello world!');
+        expect(reporter.isSynchronised).toBeTruthy();
     });
 
     it('Don\'t download on success', async () => {
-        await reporter.onRunnerEnd({
-            failures: 0,
-            cid: '0-0',
-            sessionId: 'xs3wt345t34tergde',
-            config: {
-                protocol: 'http',
-                hostname: 'selenium',
-                port: 4444,
+        await reporter.onRunnerEnd({ failures: 0, ...config });
+
+        expect(!downloadRequest.isDone());
+        expect(!deleteRequest.isDone());
+        expect(fs.existsSync(targetFile)).toBeFalsy();
+        expect(reporter.isSynchronised).toBeTruthy();
+    });
+
+    it('Download on success if required', async () => {
+        reporter = new SeleniumVideoReporter({
+            saveAllVideos: true,
+            writeStream: {
+                write() {
+                },
             },
         });
-        expect(fs.existsSync(targetFile)).toBeFalsy();
+        await reporter.onRunnerEnd({ failures: 0, ...config });
+
+        expect(downloadRequest.isDone());
+        expect(deleteRequest.isDone());
+        expect(fs.existsSync(targetFile)).toBeTruthy();
+        expect(fs.readFileSync(targetFile, 'utf-8')).toEqual('Hello world!');
+        expect(reporter.isSynchronised).toBeTruthy();
     });
 });
