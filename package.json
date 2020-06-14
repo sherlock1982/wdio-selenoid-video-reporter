@@ -13,7 +13,7 @@
   "main": "build/index.js",
   "scripts": {
     "lint": "eslint src/",
-    "test": "jest src/",
+    "test": "jest src/ --coverage",
     "compile": "babel src --out-dir build",
     "ci": "npm-run-all lint test compile"
   },

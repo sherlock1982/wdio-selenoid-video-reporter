@@ -80,4 +80,34 @@ describe('Main test', () => {
         expect(fs.readFileSync(targetFile, 'utf-8')).toEqual('Hello world!');
         expect(reporter.isSynchronised).toBeTruthy();
     });
+
+    it('Keep successful video on server', async () => {
+        reporter = new SeleniumVideoReporter({
+            saveAllVideos: false,
+            deleteSuccessfulVideos: false,
+            writeStream: {
+                write() {
+                },
+            },
+        });
+        await reporter.onRunnerEnd({ failures: 0, ...config });
+
+        expect(!downloadRequest.isDone());
+        expect(!deleteRequest.isDone());
+    });
+
+    it('Keep failed video on server', async () => {
+        reporter = new SeleniumVideoReporter({
+            saveAllVideos: false,
+            deleteDownloadedVideos: false,
+            writeStream: {
+                write() {
+                },
+            },
+        });
+        await reporter.onRunnerEnd({ failures: 1, ...config });
+
+        expect(downloadRequest.isDone());
+        expect(!deleteRequest.isDone());
+    });
 });
