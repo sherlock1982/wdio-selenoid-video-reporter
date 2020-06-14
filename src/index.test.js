@@ -94,6 +94,7 @@ describe('Main test', () => {
 
         expect(!downloadRequest.isDone());
         expect(!deleteRequest.isDone());
+        expect(reporter.isSynchronised).toBeTruthy();
     });
 
     it('Keep failed video on server', async () => {
@@ -109,5 +110,6 @@ describe('Main test', () => {
 
         expect(downloadRequest.isDone());
         expect(!deleteRequest.isDone());
+        expect(reporter.isSynchronised).toBeTruthy();
     });
 });
