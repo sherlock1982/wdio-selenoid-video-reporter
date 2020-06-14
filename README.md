@@ -4,6 +4,8 @@ Reporter for WebdriverIO v6 that downloads videos from Selenoid Hub
 
 This is a reporter for [Webdriver IO v6](https://webdriver.io/) that downloads videos from your [Selenoid Hub](https://aerokube.com/selenoid/).
 
+For a quick start use a [boilerplace project](https://github.com/sherlock1982/wdio-selenoid-boilerplate)
+
 
 Installation
 ============
