@@ -41,14 +41,10 @@ class SeleniumVideoReporter extends WDIOReporter {
             if (this.config.saveAllVideos || runner.failures > 0) {
                 await this.downloadVideo(runner, url);
                 if (this.config.deleteDownloadedVideos) {
-                    await got(url, {
-                        method: 'DELETE',
-                    });
+                    await this.deleteVideo(url);
                 }
             } else if (this.config.deleteSuccessfulVideos) {
-                await got(url, {
-                    method: 'DELETE',
-                });
+                await this.deleteVideo(url);
             }
         } catch (e) {
             if (e.message) {
@@ -60,6 +56,12 @@ class SeleniumVideoReporter extends WDIOReporter {
             }
         }
         this.synchronised = true;
+    }
+
+    deleteVideo(url) {
+        return promiseRetry(this.config, (retry) => got(url, {
+            method: 'DELETE',
+        }).catch(retry));
     }
 
     downloadVideo(runner, url) {
