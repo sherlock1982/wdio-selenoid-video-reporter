@@ -37,18 +37,28 @@ class SeleniumVideoReporter extends WDIOReporter {
 
     async onRunnerEnd(runner) {
         try {
-            const url = `${runner.config.protocol}://${runner.config.hostname}:${runner.config.port}/video/${runner.sessionId}.mp4`;
-            if (this.config.saveAllVideos || runner.failures > 0) {
-                await this.downloadVideo(runner, url);
-                if (this.config.deleteDownloadedVideos) {
+            try {
+                const url = `${runner.config.protocol}://${runner.config.hostname}:${runner.config.port}/video/${runner.sessionId}.mp4`;
+                if (this.config.saveAllVideos || runner.failures > 0) {
+                    await this.downloadVideo(runner, url);
+                    if (this.config.deleteDownloadedVideos) {
+                        await got(url, {
+                            method: 'DELETE',
+                        });
+                    }
+                } else if (this.config.deleteSuccessfulVideos) {
                     await got(url, {
                         method: 'DELETE',
                     });
                 }
-            } else if (this.config.deleteSuccessfulVideos) {
-                await got(url, {
-                    method: 'DELETE',
-                });
+            } catch (e) {
+                if (e.message) {
+                    // eslint-disable-next-line no-console
+                    console.log(e.message);
+                } else {
+                    // eslint-disable-next-line no-console
+                    console.log(e);
+                }
             }
         } finally {
             this.synchronised = true;

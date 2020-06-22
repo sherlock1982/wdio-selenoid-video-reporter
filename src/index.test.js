@@ -24,6 +24,14 @@ describe('Main test', () => {
             fs.unlinkSync(targetFile);
         }
         downloadRequest = nock('http://selenium:4444')
+            .get('/video/not-found.mp4')
+            .reply(404);
+
+        downloadRequest = nock('http://selenium:4444')
+            .delete('/video/not-found.mp4')
+            .reply(404);
+
+        downloadRequest = nock('http://selenium:4444')
             .get('/video/xs3wt345t34tergde.mp4')
             .reply(200, 'Hello world!');
 
@@ -111,5 +119,37 @@ describe('Main test', () => {
         expect(downloadRequest.isDone());
         expect(!deleteRequest.isDone());
         expect(reporter.isSynchronised).toBeTruthy();
+    });
+
+    it('Shouldn\' fail promise on video download', async () => {
+        reporter = new SeleniumVideoReporter({
+            retries: 0,
+            saveAllVideos: false,
+            deleteDownloadedVideos: false,
+            writeStream: {
+                write() {
+                },
+            },
+        });
+        const myConfig = { failures: 1, ...config };
+        myConfig.sessionId = 'not-found';
+        expect.assertions(1);
+        await expect(reporter.onRunnerEnd(myConfig)).resolves.toEqual(undefined);
+    });
+
+    it('Shouldn\' fail promise on video delete', async () => {
+        reporter = new SeleniumVideoReporter({
+            retries: 0,
+            saveAllVideos: false,
+            deleteSuccessfulVideos: true,
+            writeStream: {
+                write() {
+                },
+            },
+        });
+        const myConfig = { ...config };
+        myConfig.sessionId = 'not-found';
+        expect.assertions(1);
+        await expect(reporter.onRunnerEnd(myConfig)).resolves.toEqual(undefined);
     });
 });
